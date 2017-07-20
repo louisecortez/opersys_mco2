@@ -6,7 +6,7 @@ public class Passenger implements Runnable {
 	
 	private Train train;
 	private Station initStation;
-	private Station destination;
+	private Track destination; // compare if curr place of train is passenger's destination
 	private Simulation simulation;
 	
 	public Passenger(int id, Simulation simulation) {
@@ -14,13 +14,13 @@ public class Passenger implements Runnable {
 		this.simulation = simulation;
 	}
 	
-	public Passenger(int id, Station destination, Simulation simulation) {
+	public Passenger(int id, Track destination, Simulation simulation) {
 		testId = id;
 		this.destination = destination;
 		this.simulation = simulation;
 	}
 	
-	public Passenger(int id, Station initStation, Station destination, Simulation simulation) {
+	public Passenger(int id, Station initStation, Track destination, Simulation simulation) {
 		testId = id;
 		this.initStation = initStation;
 		this.destination = destination;
@@ -31,11 +31,11 @@ public class Passenger implements Runnable {
 		initStation = s;
 	}
 	
-	public void setDestination(Station s) {
+	public void setDestination(Track s) {
 		destination = s;
 	}
 	
-	public boolean isDestination(Station destination) {
+	public boolean isDestination(Track destination) {
 		return this.destination == destination;
 	}
 	
