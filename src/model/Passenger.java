@@ -40,16 +40,14 @@ public class Passenger implements Runnable {
 	}
 	
 	public synchronized void boardTrain(Train t) {
-		//synchronized(this) {
 		System.out.println("Board train (Passenger)");
 		System.out.println(t.toString());
-			if(t.boardTrain(this)) {
-				initStation.removePassenger(this);
-				this.train = t;
-				System.out.println("Passenger " + testId + " boarded a train.");
-				notify();
-			}
-		//}
+		if(t.boardTrain(this)) {
+			initStation.removePassenger(this);
+			this.train = t;
+			System.out.println("Passenger " + testId + " boarded a train.");
+			notify();
+		}
 	}
 	
 	public void leaveTrain() {

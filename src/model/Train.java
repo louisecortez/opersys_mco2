@@ -108,26 +108,27 @@ public class Train implements Runnable {
 				
 				System.out.println("Train " + testId + " loads passengers.");
 				// let passengers in on train, if may space pa. (mutex'd)
-				((Station) stationCurr).notifyPassengers();
-						
+				((Station) stationCurr).notifyPassengers();						
 			}
+			
 			System.out.println("Train " + testId + " checks if it can move forward.");
 			if(ttracker.isNextTrackVacant(stationCurr)) {
 				System.out.println("Train " + testId + " moves forward.");
-				//setStationCurr(ttracker.getNextTrack(stationCurr));
 				ttracker.moveTrain(this, stationCurr);
-				stationCurr.vacate();
 			} else {
 				System.out.println("Train " + testId + " waits before moving forward.");
 				ttracker.waitOnNextTrack(this, stationCurr);
 				System.out.println("Train " + testId + " moves forward.");
-				//setStationCurr(ttracker.getNextTrack(stationCurr));
 				ttracker.moveTrain(this, stationCurr);
-				stationCurr.vacate();
+				
 			}
 		}
 	}
 
+	public Track getCurrTrack() {
+		return stationCurr;
+	}
+	
 	@Override
 	public String toString() {
 		return "Train [stationCurr=" + stationCurr + ", capacity=" + capacity + "]";

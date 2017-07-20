@@ -23,13 +23,13 @@ public class Station extends Track {
 	/**
 	 * This method notifies the passengers waiting on the station if there are free seats on the train that just arrived.
 	 */
-	public void notifyPassengers() {
+	public synchronized void notifyPassengers() {
 	
 		for(Passenger p : listPassengers) {
 			System.out.println("Notify Passengers");
 			System.out.println(currTrain.toString());
-			p.boardTrain(currTrain);
-				
+			p.boardTrain(currTrain);		
+			System.out.println("/notify passengers");
 		}
 		
 	}
