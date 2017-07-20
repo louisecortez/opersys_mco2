@@ -3,19 +3,13 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Station {
+public class Station extends Track {
 	
-	private int index;								// could be changed to station name
-	private List<Passenger> listPassengers;
-	private Train currTrain;
+	private List<Passenger> listPassengers; // passengers waiting 
 	
 	public Station(int index) {
-		this.index = index;
+		super(index);
 		listPassengers = new ArrayList<Passenger>();
-	}
-	
-	public void setCurrTrain(Train t) {
-		currTrain = t;
 	}
 	
 	public synchronized void addPassenger(Passenger p) {

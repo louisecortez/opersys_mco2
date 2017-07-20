@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Train implements Runnable {
 
-	private Station stationCurr;
+	private Track stationCurr; // current place of train
 	private Simulation simulation; // added attribute
 	private List<Passenger> listPassenger;
 	private final int capacity;
@@ -20,7 +20,7 @@ public class Train implements Runnable {
 		this.simulation = simulation;
 	}
 	
-	public void setStationCurr(Station station) {
+	public void setStationCurr(Track station) {
 		stationCurr = station;
 	}
 	
@@ -78,6 +78,7 @@ public class Train implements Runnable {
 	public void run() {
 		// loop
 			if(stationCurr != null) {
+				// check if stationCurr is a Station and not a gap
 				// unload passengers on the train, if pwede (mutex'd)
 				passengersUnload();
 				
@@ -85,6 +86,9 @@ public class Train implements Runnable {
 				stationCurr.notifyPassengers();
 			
 				// signal simulation to move to the next track.
+					// check if done na yung unloading (if meron)
+					// then check if done na yung loading (if meron)
+					// check if may train sa next station/gap
 				// wait until all trains are ready.
 				
 				
