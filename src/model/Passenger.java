@@ -6,7 +6,7 @@ public class Passenger implements Runnable {
 	
 	private Train train;
 	private Station initStation;
-	private Track destination; // compare if curr place of train is passenger's destination
+	private Station destination; // compare if curr place of train is passenger's destination
 	private Simulation simulation;
 	
 	public Passenger(int id, Simulation simulation) {
@@ -14,13 +14,13 @@ public class Passenger implements Runnable {
 		this.simulation = simulation;
 	}
 	
-	public Passenger(int id, Track destination, Simulation simulation) {
+	public Passenger(int id, Station destination, Simulation simulation) {
 		testId = id;
 		this.destination = destination;
 		this.simulation = simulation;
 	}
 	
-	public Passenger(int id, Station initStation, Track destination, Simulation simulation) {
+	public Passenger(int id, Station initStation, Station destination, Simulation simulation) {
 		testId = id;
 		this.initStation = initStation;
 		this.destination = destination;
@@ -31,7 +31,7 @@ public class Passenger implements Runnable {
 		initStation = s;
 	}
 	
-	public void setDestination(Track s) {
+	public void setDestination(Station s) {
 		destination = s;
 	}
 	
@@ -39,15 +39,17 @@ public class Passenger implements Runnable {
 		return this.destination == destination;
 	}
 	
-	public void boardTrain(Train t) {
-		synchronized(this) {
+	public synchronized void boardTrain(Train t) {
+		//synchronized(this) {
+		System.out.println("Board train (Passenger)");
+		System.out.println(t.toString());
 			if(t.boardTrain(this)) {
 				initStation.removePassenger(this);
 				this.train = t;
 				System.out.println("Passenger " + testId + " boarded a train.");
 				notify();
 			}
-		}
+		//}
 	}
 	
 	public void leaveTrain() {
@@ -83,10 +85,15 @@ public class Passenger implements Runnable {
 		
 			// wake up only if train is in the destination station : WOKEN UP BY TRAIN
 			// leaveTrain
-			
+			simulation.passengerExitSim(this);
 			System.out.println("Passenger " + testId + " successfully unboarded.");
 		}
 		
+	}
+
+	@Override
+	public String toString() {
+		return "Passenger [testId=" + testId + ", initStation=" + initStation + ", destination=" + destination + "]";
 	}
 
 }

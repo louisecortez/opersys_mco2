@@ -24,21 +24,13 @@ public class Station extends Track {
 	 * This method notifies the passengers waiting on the station if there are free seats on the train that just arrived.
 	 */
 	public void notifyPassengers() {
-		List<Thread> listThread = new ArrayList<Thread>();
-		
+	
 		for(Passenger p : listPassengers) {
-			listThread.add(new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					p.boardTrain(currTrain);
-				}
+			System.out.println("Notify Passengers");
+			System.out.println(currTrain.toString());
+			p.boardTrain(currTrain);
 				
-			}));
 		}
 		
-		for(Thread t : listThread) {
-			t.start();
-		}
 	}
 }

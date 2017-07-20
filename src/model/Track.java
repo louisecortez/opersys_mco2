@@ -1,7 +1,5 @@
 package model;
 
-import java.util.*;
-
 public class Track {
 	protected int index;								// could be changed to station name
 	protected Train currTrain;
@@ -15,7 +13,11 @@ public class Track {
 	}
 	
 	public void setCurrTrain(Train t) {
-		currTrain = t;
+		this.currTrain = t;
+	}
+	
+	public Train getCurrTrain() {
+		return currTrain;
 	}
 	
 	public boolean notOccupied() {
@@ -29,10 +31,36 @@ public class Track {
 	}
 	
 	/**
-	 * This method notifies the passengers to wait until the train moves to a station.
+	 * Checks whether there is a train on the tracks.
+	 * @return whether this track is occupied or not
 	 */
-	// track will notify all trains 
-	public void notifyPassengers() {
-		
+	public synchronized boolean isVacant() {
+		return currTrain == null;
+	}
+	
+	/**
+	 * Train parameter would wait until this track becomes vacant
+	 * @param t train waiting on this track space
+	 */
+	public synchronized void waitOn(Train t) {
+		try {
+			this.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * This method is called by Train objects when it needs to vacate the current track.
+	 */
+	public synchronized void vacate() {
+		currTrain = null;
+		this.notifyAll();
+	}
+
+	@Override
+	public String toString() {
+		return "Track [index=" + index + "]";
 	}
 }
