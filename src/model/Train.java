@@ -43,13 +43,17 @@ public class Train implements Runnable {
 	 * @param p	
 	 * @return whether the passenger successfully boards the train
 	 */
-	public synchronized boolean boardTrain(Passenger p) {
-		if(listPassenger.size() < capacity) {
-			listPassenger.add(p);
-			return true;
+	public boolean boardTrain(Passenger p) {
+		synchronized(listPassenger) {
+			if(listPassenger.size() < capacity) {
+				System.out.println("Train " + testId + " accepts Passenger " + p.getId());
+				listPassenger.add(p);
+				return true;
+			}
+			else return false;
 		}
-		else return false;
 	}
+	
 	
 	/**
 	 * 
@@ -96,8 +100,13 @@ public class Train implements Runnable {
 		}
 		
 		System.out.println("Train " + testId + " start running.");
-		while(true) {
-			
+		while(!simulation.allPassengersExited()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println("Train " + testId + " at station " + stationCurr.toString() + " checks if station instance.");
 			System.out.println("Current train at current station: " + stationCurr.getCurrTrain().toString());
 			if(stationCurr instanceof Station) {

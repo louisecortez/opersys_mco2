@@ -58,12 +58,12 @@ public class Simulation {
 		// Assign station to train
 		ttracker.getTrack(0).setCurrTrain(listTrain.get(0));
 		System.out.println(ttracker.getTrack(0).getCurrTrain().toString());
-		ttracker.getTrack(4).setCurrTrain(listTrain.get(1));
+		//ttracker.getTrack(4).setCurrTrain(listTrain.get(1));
 		
 		
 		// Assign train to station
 		listTrain.get(0).setStationCurr(ttracker.getTrack(0));
-		listTrain.get(1).setStationCurr(ttracker.getTrack(4));
+		//listTrain.get(1).setStationCurr(ttracker.getTrack(4));
 		System.out.println(ttracker.getTrack(0).getCurrTrain().toString());
 		
 		// Initialize (Runnable) passengers

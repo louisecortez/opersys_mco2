@@ -35,19 +35,24 @@ public class Passenger implements Runnable {
 		destination = s;
 	}
 	
+	public int getId() {
+		return testId;
+	}
+	
 	public boolean isDestination(Track destination) {
 		return this.destination == destination;
 	}
 	
-	public synchronized void boardTrain(Train t) {
-		System.out.println("Board train (Passenger)");
-		System.out.println(t.toString());
+	public synchronized boolean boardTrain(Train t) {
+		System.out.println("Board train (Passenger) " + testId);
 		if(t.boardTrain(this)) {
-			initStation.removePassenger(this);
+			//initStation.removePassenger(this);
 			this.train = t;
 			System.out.println("Passenger " + testId + " boarded a train.");
 			notify();
+			return true;
 		}
+		return false;
 	}
 	
 	public void leaveTrain() {
