@@ -33,6 +33,10 @@ public class Train implements Runnable {
 		ttracker = tracker;
 	}
 	
+	public int getId() {
+		return testId;
+	}
+	
 	public void setStationCurr(Track station) {
 		stationCurr = station;
 	}
@@ -108,30 +112,28 @@ public class Train implements Runnable {
 				e.printStackTrace();
 			}
 			System.out.println("Train " + testId + " at station " + stationCurr.toString() + " checks if station instance.");
-			System.out.println("Current train at current station: " + stationCurr.getCurrTrain().toString());
+			//System.out.println("Current train at current station: " + stationCurr.getCurrTrain().toString());
 			if(stationCurr instanceof Station) {
 				System.out.println("Train " + testId + " is station instance.");
 				// unload passengers on the train, if pwede (mutex'd)
 				System.out.println("Train " + testId + " unloads passengers.");
 				passengersUnload();
-				
 				System.out.println("Train " + testId + " loads passengers.");
 				// let passengers in on train, if may space pa. (mutex'd)
 				((Station) stationCurr).notifyPassengers();						
 			}
-			
 			System.out.println("Train " + testId + " checks if it can move forward.");
-			if(ttracker.isNextTrackVacant(stationCurr)) {
+			if(ttracker.moveTrain(this, stationCurr)) {
 				System.out.println("Train " + testId + " moves forward.");
-				ttracker.moveTrain(this, stationCurr);
+				//ttracker.moveTrain(this, stationCurr);
 			} else {
 				System.out.println("Train " + testId + " waits before moving forward.");
 				ttracker.waitOnNextTrack(this, stationCurr);
 				System.out.println("Train " + testId + " moves forward.");
 				ttracker.moveTrain(this, stationCurr);
-				
 			}
 		}
+		System.out.println("Train " + testId + " exits simulation");
 	}
 
 	public Track getCurrTrack() {
@@ -140,6 +142,6 @@ public class Train implements Runnable {
 	
 	@Override
 	public String toString() {
-		return "Train [stationCurr=" + stationCurr + ", capacity=" + capacity + "]";
+		return "Train " + testId;
 	}
 }

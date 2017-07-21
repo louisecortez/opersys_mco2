@@ -66,10 +66,16 @@ public class TrackManager {
 			train.getCurrTrack().setCurrTrain(train);
 			//System.out.println("Train next: " + train.getCurrTrack().getCurrTrain().toString());
 			//System.out.println("Train verify: " + train.getCurrTrack().getCurrTrain().getCurrTrack().toString());
+			try {
+				Thread.sleep(500);				// in case a train is waiting on the current station
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			track.vacate();
 			return true;
 		} 
-		System.out.println("Train " + train.getId());
+		System.out.println("Train " + train.getId() + " waits.");
 		return false;
 	
 	}
