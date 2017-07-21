@@ -20,6 +20,10 @@ public class Track {
 		return currTrain;
 	}
 	
+	public int getId() {
+		return index;
+	}
+	
 	public boolean notOccupied() {
 		if(currTrain == null) {
 			System.out.println("This track is free");

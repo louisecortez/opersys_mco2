@@ -35,6 +35,14 @@ public class Passenger implements Runnable {
 		destination = s;
 	}
 	
+	public int getOrigin() {
+		return initStation.getId();
+	}
+	
+	public int getDestination() {
+		return destination.getId();
+	}
+	
 	public int getId() {
 		return testId;
 	}
