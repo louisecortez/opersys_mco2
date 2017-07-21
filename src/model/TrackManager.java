@@ -53,19 +53,25 @@ public class TrackManager {
 	 * @param t the train's current track.
 	 * @return whether the track following Track t is vacant
 	 */
-	public boolean isNextTrackVacant(Track t) {
+	public synchronized boolean isNextTrackVacant(Track t) {
 		return getNextTrack(t).isVacant();
 	}
 	
-	public void moveTrain(Train train, Track track) {
+	public synchronized boolean moveTrain(Train train, Track track) {
 		System.out.println("Move train");
-		//System.out.println("Track current: " + track.toString());
-		train.setStationCurr(getNextTrack(track));
-		//System.out.println("Track next: " + train.getCurrTrack().toString());
-		train.getCurrTrack().setCurrTrain(train);
-		//System.out.println("Train next: " + train.getCurrTrack().getCurrTrain().toString());
-		//System.out.println("Train verify: " + train.getCurrTrack().getCurrTrain().getCurrTrack().toString());
-		track.vacate();
+		if(isNextTrackVacant(track)) {
+			//System.out.println("Track current: " + track.toString());
+			train.setStationCurr(getNextTrack(track));
+			//System.out.println("Track next: " + train.getCurrTrack().toString());
+			train.getCurrTrack().setCurrTrain(train);
+			//System.out.println("Train next: " + train.getCurrTrack().getCurrTrain().toString());
+			//System.out.println("Train verify: " + train.getCurrTrack().getCurrTrain().getCurrTrack().toString());
+			track.vacate();
+			return true;
+		} 
+		System.out.println("Train " + train.getId());
+		return false;
+	
 	}
 	
 	/**
