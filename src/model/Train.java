@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Train implements Runnable {
+public class Train implements Runnable, Pausable {
 
 	private int testId;
 	
@@ -13,18 +13,14 @@ public class Train implements Runnable {
 	private final int capacity;
 	
 	private TrackManager ttracker;
-	// TEST
 	
+	// Pausable vars
+	private boolean paused;
+
 	/**
 	 * 
 	 * @param capacity	Maximum passenger capacity of the train.
 	 */
-//	public Train(int capacity, Simulation simulation) { // added simulation
-//		listPassenger = new ArrayList<Passenger>();
-//		this.capacity = capacity;
-//		this.simulation = simulation;
-//	}
-	
 	public Train(int testId, int capacity, TrackManager tracker, Simulation simulation) {
 		this.testId = testId;
 		listPassenger = new ArrayList<Passenger>();
@@ -40,7 +36,11 @@ public class Train implements Runnable {
 	public void setStationCurr(Track station) {
 		stationCurr = station;
 	}
-
+	
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+	
 	/**
 	 * Called by the Passenger class. Passenger attempts to board the train.
 	 * 
@@ -58,9 +58,8 @@ public class Train implements Runnable {
 		}
 	}
 	
-	
 	/**
-	 * 
+	 * Removes a Passenger object from the Train. 
 	 * @param p
 	 */
 	public synchronized void alightTrain(Passenger p) {
@@ -92,14 +91,32 @@ public class Train implements Runnable {
 		for(Thread t : listAlightThread) {
 			t.start();
 		}
+		
+		for(Thread t : listAlightThread) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
+	/**
+	 * HOW TRAINS WORK
+	 * 
+	 * - Train threads continue until there are no more Passenger objects in the simulation.
+	 * - If the Train object's current track is an instance of a Station:
+	 * 		- Train object removes all of its Passenger objects whose destination is the current Station.
+	 * 		- Tells the current station to transfer all of its Passenger objects to this Train while the capacity allows it.
+	 * 	- Train attempts to move to the next Track (through a TrackManager).
+	 *  - If the next Track is occupied by a train, Train object waits on the next Track, notified only when the next Track is free.
+	 */
 	@Override
 	public void run() {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -108,29 +125,54 @@ public class Train implements Runnable {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			if(paused) {
+				pauseSim();
+			}
+
 			System.out.println("Train " + testId + " at station " + stationCurr.toString() + " checks if station instance.");
-			//System.out.println("Current train at current station: " + stationCurr.getCurrTrain().toString());
 			if(stationCurr instanceof Station) {
 				System.out.println("Train " + testId + " is station instance.");
-				// unload passengers on the train, if pwede (mutex'd)
+				
+				if(paused) {
+					pauseSim();
+				}
+				// unload passengers on the train
 				System.out.println("Train " + testId + " unloads passengers.");
 				passengersUnload();
+				
+				if(paused) {
+					pauseSim();
+				}
+				// let passengers in on train
 				System.out.println("Train " + testId + " loads passengers.");
-				// let passengers in on train, if may space pa. (mutex'd)
 				((Station) stationCurr).notifyPassengers();						
 			}
+			
 			System.out.println("Train " + testId + " checks if it can move forward.");
 			if(ttracker.moveTrain(this, stationCurr)) {
+				
+				if(paused) {
+					pauseSim();
+				}
 				System.out.println("Train " + testId + " moves forward.");
-				//ttracker.moveTrain(this, stationCurr);
+				
 			} else {
+				
+				if(paused) {
+					pauseSim();
+				}
 				System.out.println("Train " + testId + " waits before moving forward.");
 				ttracker.waitOnNextTrack(this, stationCurr);
+				
+				if(paused) {
+					pauseSim();
+				}
 				System.out.println("Train " + testId + " moves forward.");
 				ttracker.moveTrain(this, stationCurr);
+				
 			}
 		}
 		System.out.println("Train " + testId + " exits simulation");
@@ -144,4 +186,16 @@ public class Train implements Runnable {
 	public String toString() {
 		return "Train " + testId;
 	}
+
+	@Override
+	public void pauseSim() {
+		try {
+			simulation.pauseThread();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

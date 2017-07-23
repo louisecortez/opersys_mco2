@@ -2,6 +2,11 @@ package model;
 
 import java.util.*;
 
+/**
+ * This function manages the tracks in the simulation, including their creation, and train management.
+ * @author Allyza
+ *
+ */
 public class TrackManager {
 	
 	private List<Track> tracks; // can change 
@@ -21,15 +26,18 @@ public class TrackManager {
 			} else {
 				track = new Track(i);
 			}
-			
-//			if(track instanceof Station) {
-//				System.out.println("Station " + i + " created");
-//			} else {
-//				System.out.println("Track " + i + " created");
-//			}
-			
+	
 			tracks.add(track);
 		}
+	}
+	
+	/**
+	 * This function returns the track at the given index.
+	 * @param index of the track to return (should only accept 0 - 15)
+	 * @return track at the given index
+	 */
+	public Track getTrack(int index) {
+		return tracks.get(index);
 	}
 	
 	/**
@@ -43,8 +51,34 @@ public class TrackManager {
 		return tracks.get((nextIndex + 1) % tracks.size());
 	}
 	
-	public Track getTrack(int index) {
-		return tracks.get(index);
+	/**
+	 * This function is called by Train objects in order to move to the next track in the series.
+	 * @param train The train to be moved.
+	 * @param track The current track the train is placed on
+	 * @return function returns true if it successfully moved to the next track.
+	 */
+	public synchronized boolean moveTrain(Train train, Track track) {
+		System.out.println("Move train");
+		if(isNextTrackVacant(track)) {
+			//System.out.println("Track current: " + track.toString());
+			train.setStationCurr(getNextTrack(track));
+			//System.out.println("Track next: " + train.getCurrTrack().toString());
+			train.getCurrTrack().setCurrTrain(train);
+			//System.out.println("Train next: " + train.getCurrTrack().getCurrTrain().toString());
+			//System.out.println("Train verify: " + train.getCurrTrack().getCurrTrain().getCurrTrack().toString());
+			try {
+				// makes thread sleep in case a train that previously used this method is waiting on the current track on this method.
+				// problems arise when the previous train does not call waitOnNextTrack() quickly enough before the current train vacates its track.
+				Thread.sleep(500);		
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			track.vacate();
+			return true;
+		} 
+		System.out.println("Train " + train.getId() + " waits.");
+		return false;
+	
 	}
 	
 	/**
@@ -57,31 +91,8 @@ public class TrackManager {
 		return getNextTrack(t).isVacant();
 	}
 	
-	public synchronized boolean moveTrain(Train train, Track track) {
-		System.out.println("Move train");
-		if(isNextTrackVacant(track)) {
-			//System.out.println("Track current: " + track.toString());
-			train.setStationCurr(getNextTrack(track));
-			//System.out.println("Track next: " + train.getCurrTrack().toString());
-			train.getCurrTrack().setCurrTrain(train);
-			//System.out.println("Train next: " + train.getCurrTrack().getCurrTrain().toString());
-			//System.out.println("Train verify: " + train.getCurrTrack().getCurrTrain().getCurrTrack().toString());
-			try {
-				Thread.sleep(500);				// in case a train is waiting on the current station
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			track.vacate();
-			return true;
-		} 
-		System.out.println("Train " + train.getId() + " waits.");
-		return false;
-	
-	}
-	
 	/**
-	 * This function is called by trains when the succeeding station is
+	 * This function is called by Train objects when the succeeding station is
 	 * occupied by another train. Train thread would wait on the succeeding
 	 * station.
 	 * 

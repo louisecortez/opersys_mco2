@@ -16,10 +16,18 @@ public class Station extends Track {
 		listPassengers = new CopyOnWriteArrayList<Passenger>();
 	}
 	
+	/**
+	 * Add passenger to the station.
+	 * @param p Passenger added to the station.
+	 */
 	public synchronized void addPassenger(Passenger p) {
 		listPassengers.add(p);
 	}
 	
+	/**
+	 * Remove passenger from the station. Used in simulation before Passenger boards a train.
+	 * @param p Passenger removed from the station.
+	 */
 	public synchronized void removePassenger(Passenger p) {
 		listPassengers.remove(p);
 	}
@@ -28,36 +36,16 @@ public class Station extends Track {
 	 * This method notifies the passengers waiting on the station if there are free seats on the train that just arrived.
 	 */
 	public void notifyPassengers() {
-		//ListIterator<Passenger> itPassenger = listPassengers.listIterator();
-		
-		System.out.println("NotifyPassengers() List size: " + listPassengers.size());
+	
+		System.out.println("---NotifyPassengers() List size: " + listPassengers.size());
 		for(Passenger p : listPassengers) {
-			System.out.println("Notify Passengers");
-			System.out.println(currTrain.toString());
+			System.out.println("---Notify Passengers");
+			System.out.println("---" + currTrain.toString());
 			if(p.boardTrain(currTrain)) {
 				this.removePassenger(p);
-			}	
-			System.out.println("/notify passengers");
-		}
-		
-//		for (Iterator<Passenger> it = listPassengers.iterator(); it.hasNext(); ) {
-//		    Passenger pIt = it.next();
-//		    System.out.println("Notify Passengers");
-//			System.out.println(currTrain.toString()); 
-//			if(pIt.boardTrain(currTrain)) {
-//				this.removePassenger(pIt);
-//			}
-//			System.out.println("/notify passengers");
-//		}
-		
-//		//synchronized(itPassenger) {
-//			while(itPassenger.hasNext()) {
-//				System.out.println("Notify Passengers");
-//				System.out.println(currTrain.toString());
-//				(itPassenger.next()).boardTrain(currTrain);		
-//				System.out.println("/notify passengers");
-//			}
-//		//}
+			}
+			System.out.println("---/notify passengers");
+		}	
 		
 		
 	}

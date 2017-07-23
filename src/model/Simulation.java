@@ -90,6 +90,30 @@ public class Simulation {
 		return totalPassengers == totalExited;
 	}
 	
+	public void pauseSimulation() {
+		List<Thread> tPauseList = new ArrayList<Thread>();
+		
+		for(int i = 0; i < listPassenger.size(); i++) {
+			final int index = i;
+			tPauseList.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					listPassenger.get(index).pauseSim();
+				}
+				
+			}));
+		}
+	}
+	
+	public void resumeSimulation() {
+		
+	}
+	
+	public synchronized void pauseThread() throws InterruptedException {
+		this.wait();
+	}
+	
 	// TEST FUNCTION
 	public void startSimulation() {
 		
@@ -123,9 +147,9 @@ public class Simulation {
 			assignStationToTrain(j, i);
 			assignTrainToStation(j, i);
 			
-			System.out.println(ttracker.getTrack(i).getCurrTrain().toString());
-			System.out.println(ttracker.getTrack(i).getCurrTrain().toString());
-			
+//			System.out.println(ttracker.getTrack(i).getCurrTrain().toString());
+//			System.out.println(ttracker.getTrack(i).getCurrTrain().toString());
+//			
 			j += 2;
 		}
 		
@@ -154,6 +178,23 @@ public class Simulation {
 		for(Thread t : listPThread) {
 			t.start();
 		}
+		
+		for(Thread t : listPThread) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println("  ____                                                ____                   ");
+		System.out.println(" |  _ \\ __ _ ___ ___  ___ _ __   __ _  ___ _ __ ___  |  _ \\  ___  _ __   ___ ");
+		System.out.println(" | |_) / _` / __/ __|/ _ \\ '_ \\ / _` |/ _ \\ '__/ __| | | | |/ _ \\| '_ \\ / _ \\");
+		System.out.println(" |  __/ (_| \\__ \\__ \\  __/ | | | (_| |  __/ |  \\__ \\ | |_| | (_) | | | |  __/");
+		System.out.println(" |_|   \\__,_|___/___/\\___|_| |_|\\__, |\\___|_|  |___/ |____/ \\___/|_| |_|\\___|");
+		System.out.println("                                |___/                                        ");
+
 	}
 }
 

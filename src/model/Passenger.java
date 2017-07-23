@@ -1,6 +1,6 @@
 package model;
 
-public class Passenger implements Runnable {
+public class Passenger implements Runnable, Pausable {
 
 	private int testId;
 	
@@ -52,11 +52,10 @@ public class Passenger implements Runnable {
 	}
 	
 	public synchronized boolean boardTrain(Train t) {
-		System.out.println("Board train (Passenger) " + testId);
+		System.out.println("\tBoard train() (Passenger) " + testId);
 		if(t.boardTrain(this)) {
-			//initStation.removePassenger(this);
 			this.train = t;
-			System.out.println("Passenger " + testId + " boarded a train.");
+			System.out.println("\tPassenger " + testId + " boarded a train.");
 			notify();
 			return true;
 		}
@@ -65,29 +64,36 @@ public class Passenger implements Runnable {
 	
 	public void leaveTrain() {
 		synchronized(this) {
-			System.out.println("Passenger " + testId + " leaveTrain() execute.");
+			System.out.println("\tPassenger " + testId + " leaveTrain() execute.");
 			train = null;
 			notify();
 		}
 	}
 	
+	/**
+	 * HOW PASSENGER WORKS
+	 * 
+	 * - When its thread starts running, Passenger object waits until a Train visits its initialStation(origin)
+	 * - Thread continues only if there is a Station that successfully boards this Passenger to a Train.
+	 * - Waits again until it's Train object reaches the Passenger object's destination.
+	 * - Passenger exits Train, finishes simulation.
+	 */
 	@Override
 	public void run() {
 		
 		synchronized(this) {
 			// start by waiting at the station
-			System.out.println("Passenger " + testId + " waits for a train.");
+			System.out.println("\tPassenger " + testId + " waits for a train.");
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
-			// (assuming it wakes up when boardTrain)0
-			// add train sa passenger
+			// (assuming it wakes up when boardTrain)
 			
 			// wait for destination
-			System.out.println("Passenger " + testId + " waits inside a train.");
+			System.out.println("\tPassenger " + testId + " waits inside a train.");
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -97,7 +103,7 @@ public class Passenger implements Runnable {
 			// wake up only if train is in the destination station : WOKEN UP BY TRAIN
 			// leaveTrain
 			simulation.passengerExitSim(this);
-			System.out.println("Passenger " + testId + " successfully unboarded.");
+			System.out.println("\tPassenger " + testId + " successfully unboarded.");
 		}
 		
 	}
@@ -105,6 +111,16 @@ public class Passenger implements Runnable {
 	@Override
 	public String toString() {
 		return "Passenger [testId=" + testId + ", initStation=" + initStation + ", destination=" + destination + "]";
+	}
+
+	@Override
+	public synchronized void pauseSim() {
+		try {
+			simulation.pauseThread();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
