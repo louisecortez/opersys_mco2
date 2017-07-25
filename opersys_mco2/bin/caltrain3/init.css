@@ -1,0 +1,17 @@
+.root{
+    -fx-font-size: 8pt;
+    -fx-font-family: "Arial";
+    -fx-padding: 6;
+    -fx-background: rgb(225,228,203);
+}
+
+.Button{
+    -fx-border-color: rgb(49,89,23);
+    -fx-border-radius: 5;
+    -fx-padding: 3 6 6 6;
+}
+
+.labels{
+    
+}
+

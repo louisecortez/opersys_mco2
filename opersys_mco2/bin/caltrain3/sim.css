@@ -1,0 +1,5 @@
+.root{
+    -fx-background-image: url("Slide1.JPG");
+    -fx-background-repeat: stretch;
+    -fx-background-position: top left;
+}
